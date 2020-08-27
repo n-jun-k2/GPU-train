@@ -8,4 +8,7 @@ RUN apt-get -y update && apt-get -y upgrade && \
 	zlib1g-dev \
 	libffi-dev
 
-WORKDIR /tmp
+RUN mkdir /tmp/src
+WORKDIR /tmp/src
+
+COPY src ./

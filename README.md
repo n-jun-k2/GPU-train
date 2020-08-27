@@ -1,12 +1,24 @@
 # Nvidia-Docker-train
-このプロジェクトでは、WSL2上のUbuntuを利用したDockerのGPU処理を活用するサンプル。
+Sample to develop a program using GPU on WSL2 Ubuntu.
 
-## WSL2のUbuntuのセットアップ
-[wsl_setup.md](./Doc/wsl_setup.md)
+## Setup WSL2
+Minimize the WSL2 Ubuntu environment([wsl_setup.md](./Doc/wsl_setup.md))
 
 
-## コンテナ起動方法
-run時に`--gpus`でgpuを指定する。
+## How to run
+Write the image and execution of each container to the makefile as needed.
+
+### for python 
+```bash
+# Build Docker image
+make build name=python
+# Start and login container
+make python-run
 ```
-docker run --gpus all --name <container-name> -it <image-name> /bin/bash
+### for C lang
+```bash
+# Build Docker image
+make build name=c
+# Start and login container
+make c-run
 ```
