@@ -22,3 +22,29 @@ make build name=c
 # Start and login container
 make c-run
 ```
+
+## Folder structure
+```
+GPU-TRAIN
+    ┣ Doc/・・・・・・・・・・・・ ドキュメント成果物
+    ┃   ┗
+    ┣ Docker/
+    ┃   ┣ c /・・・・・・・・・・・ C言語で開発するプロジェクトフォルダ
+    ┃   ┃   ┣ src /
+    ┃   ┃   ┃   ┣ ...
+    ┃   ┃   ┃   ┗ ...
+    ┃   ┃   ┣ Dockerfile
+    ┃   ┃   ┗ README.md
+    ┃   ┗ python /・・・・・・・・ pythonで開発するプロジェクトフォルダ
+    ┃       ┣ packages / アプリケーションが格納されている。
+    ┃       ┃   ┣ ...
+    ┃       ┃   ┗ ...
+    ┃       ┣ .gitignore
+    ┃       ┣ Dockerfile
+    ┃       ┗ requirements.txt
+    ┃
+    ┣ scripts
+    ┣ LICENSE
+    ┣ makefile
+    ┗ README.md
+```
