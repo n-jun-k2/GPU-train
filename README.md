@@ -26,17 +26,17 @@ make c-run
 ## Folder structure
 ```
 GPU-TRAIN
-    ┣ Doc/・・・・・・・・・・・・ ドキュメント成果物
-    ┃   ┗
+    ┣ Doc/・・・・・・・・・・・・ Document
+    ┃   ┗ ...
     ┣ Docker/
-    ┃   ┣ c /・・・・・・・・・・・ C言語で開発するプロジェクトフォルダ
+    ┃   ┣ c /・・・・・・・・・・・ Development of CUDA
     ┃   ┃   ┣ src /
     ┃   ┃   ┃   ┣ ...
     ┃   ┃   ┃   ┗ ...
     ┃   ┃   ┣ Dockerfile
     ┃   ┃   ┗ README.md
-    ┃   ┗ python /・・・・・・・・ pythonで開発するプロジェクトフォルダ
-    ┃       ┣ packages / アプリケーションが格納されている。
+    ┃   ┗ python /・・・・・・・・ Project folder developed with python
+    ┃       ┣ packages / Contains the application.
     ┃       ┃   ┣ ...
     ┃       ┃   ┗ ...
     ┃       ┣ .gitignore

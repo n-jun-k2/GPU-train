@@ -1,29 +1,30 @@
-# WSL2上のUbuntu18.04にGPU対応Dockerを構築する手順
-## 参考
-- [WSLコマンドリファレンス](https://docs.microsoft.com/ja-jp/windows/wsl/reference)
-- [WSL2アップデート方法](https://qiita.com/naka345/items/eba1870fba589a68847e#wsl2%E4%B8%8A%E3%81%ABdocker%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-- [WSL用Nvidiaドライバー](https://developer.nvidia.com/cuda/wsl/download)
+# Steps to build Docker for GPU on Ubuntu on WSL2
+## reference
+- [WSL command reference](https://docs.microsoft.com/ja-jp/windows/wsl/reference)
+- [WSL2 update method](https://qiita.com/naka345/items/eba1870fba589a68847e#wsl2%E4%B8%8A%E3%81%ABdocker%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+- [Nvidia driver for WSL](https://developer.nvidia.com/cuda/wsl/download)
 
-## 前提条件
-- OS: Windows 10 Pro Insider Preview (OSビルド2015以降)
-- Linuxカーネル>=4.19.121(WSL上で動かすLinux)
-- WSL用Nvidiaドライバーインストール済み
+## Prerequisite
+- OS: Windows 10 Pro Insider Preview (OS Build 2015 or later)
+- Linux kernel >=4.19.121 (Linux running on WSL)
+- Nvidia driver installed for WSL
 
-## 各スクリプトを実行。
-以下の順番で実行する。
+## Execute each script.
+Execute in the following order.
+
 1. wsl-install-cudaxx.sh
 1. wsl-install-nvidia-container-toolkit.sh
 1. wsl-install-docker.sh
 
 
-## CUDA動作確認
-以下のコマンドを実行しテストをパスする。
+## CUDA operation check
+Execute the following command and pass the test.
 ```
 cd /usr/local/cuda/samples/4_Finance/BlackScholes
 sudo make
 ./BlackScholes
 ```
-以下のような結果になる。
+The result is as follows.
 ```
 :/usr/local/cuda/samples/4_Finance/BlackScholes# ./BlackScholes
 [./BlackScholes] - Starting...
