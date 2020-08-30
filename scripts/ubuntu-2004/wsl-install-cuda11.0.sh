@@ -9,7 +9,7 @@ sudo dpkg -i cuda-repo-ubuntu2004-11-0-local_11.0.2-450.51.05-1_amd64.deb
 sudo apt-key add /var/cuda-repo-ubuntu2004-11-0-local/7fa2af80.pub
 sudo apt-get update -y
 sudo apt-get upgrade -y
-apt-get install -y cuda-toolkit-11-0
+sudo apt-get install -y cuda-toolkit-11-0
 
 
 cd -
