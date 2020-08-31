@@ -5,6 +5,26 @@
 nvcc -arch <最適化アーキテクチャ> <ソースファイル> -o <出力ファイル名>
 ```
 
+## プロファイリング
+``` 
+> nvprof ./hello
+Hello World from CPU!
+==64== NVPROF is profiling process 64, command: ./hello
+==64== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory       
+==64== Error: Internal profiling error 4075:9.
+======== Profiling result:
+No kernels were profiled.
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+      API calls:   99.88%  170.07ms         1  170.07ms  170.07ms  170.07ms  cudaLaunchKernel
+                    0.11%  183.00us         1  183.00us  183.00us  183.00us  cuDeviceTotalMem
+                    0.01%  13.400us        97     138ns     100ns     600ns  cuDeviceGetAttribute
+                    0.00%  3.5000us         2  1.7500us     200ns  3.3000us  cuDeviceGet
+                    0.00%  1.6000us         3     533ns     100ns  1.3000us  cuDeviceGetCount
+                    0.00%     600ns         1     600ns     600ns     600ns  cuDeviceGetName
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+======== Error: CUDA profiling error.
+```
+
 ## コマンドオプション
 [CUDA doc](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#nvcc-command-options)
 

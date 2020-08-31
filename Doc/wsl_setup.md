@@ -1,13 +1,38 @@
 # Steps to build Docker for GPU on Ubuntu on WSL2
 ## reference
 - [WSL command reference](https://docs.microsoft.com/ja-jp/windows/wsl/reference)
-- [WSL2 update method](https://qiita.com/naka345/items/eba1870fba589a68847e#wsl2%E4%B8%8A%E3%81%ABdocker%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+- [Windows 10 updater](https://www.microsoft.com/ja-jp/software-download/windows10)
+- [WSL2 driver](https://developer.nvidia.com/cuda/wsl/download)
+- [Linux kernel update](https://docs.microsoft.com/ja-jp/windows/wsl/wsl2-kernel#download-the-linux-kernel-update-package)
 - [Nvidia driver for WSL](https://developer.nvidia.com/cuda/wsl/download)
 
 ## Prerequisite
 - OS: Windows 10 Pro Insider Preview (OS Build 2015 or later)
 - Linux kernel >=4.19.121 (Linux running on WSL)
 - Nvidia driver installed for WSL
+
+
+## Enable Windows features
+Run the following command in powershell
+```
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+```
+
+## WSL update
+
+```
+>wsl --update
+更新をチェック中...
+更新をダウンロード中...
+更新をインストール中...
+この変更は、次回の WSL 再起動時に有効になります。強制的に再起動するには、' wsl --shutdown ' を実行してください。
+カーネル バージョン: 4.19.128
+
+>wsl --shutdown
+```
 
 ## Execute each script.
 Execute in the following order.
