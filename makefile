@@ -8,10 +8,10 @@ run:
 	@docker run --gpus all --name $(container)-gpu -it $(name):$(cuda) /bin/bash
 
 python-run:
-	@docker run --gpus all --name python-gpu -it -v $(curdir)/Docker/python/packages/:/tmp/python-app python:$(cuda) /bin/bash
+	@docker run --gpus all --name python-gpu -it --rm -v $(curdir)/Docker/python/packages/:/tmp/python-app python:$(cuda) /bin/bash
 
 c-run:
-	@docker run --gpus all --name c-gpu -it -v $(curdir)/Docker/c/src/:/tmp/src c:$(cuda) /bin/bash
+	@docker run --gpus all --name c-gpu -it --rm -v $(curdir)/Docker/c/src/:/tmp/src c:$(cuda) /bin/bash
 
 test:
 	@echo $(curdir)
