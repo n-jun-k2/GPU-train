@@ -17,7 +17,5 @@ test:
 	@echo $(curdir)
 
 clean:
-	@docker stop $(shell docker ps -aq)
-	@docker rm -f $(shell docker ps -aq)
 	@docker rmi -f $(shell docker images -aq)
 	@docker volume rm $(shell docker volume ls -q)
