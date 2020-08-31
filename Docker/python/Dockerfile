@@ -6,7 +6,8 @@ RUN apt-get -y update && apt-get -y upgrade && \
 	apt-get install -y --no-install-recommends curl  \
 	build-essential \
 	zlib1g-dev \
-	libffi-dev
+	libffi-dev \
+	libbz2-dev
 
 WORKDIR /tmp
 
