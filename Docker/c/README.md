@@ -5,7 +5,7 @@
 nvcc -arch <最適化アーキテクチャ> <ソースファイル> -o <出力ファイル名>
 ```
 
-今回の環境ではCUDA10の環境のため以下のように実行する。
+今回の環境ではRTX2060の環境のため以下のように実行する。
 ```bash
 > nvcc main.cu -o hello -arch=sm_75
 > ./hello 
@@ -62,4 +62,21 @@ No kernels were profiled.
 | -ptx | すべての.cu入力ファイルをデバイス専用の.ptxファイルにコンパイルします。ホストコードを破棄。 |
 | -arch | GPU仮想アーキテクチャのクラスの名前を指定します。実際のアーキテクチャを指定する場合最も近い仮想アーキテクチャをしようします。サポートされている仮想アーキテクチャのリストについては、[仮想アーキテクチャ機能リスト](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#virtual-architecture-feature-list)を、サポートされている実際のアーキテクチャのリストについては、[GPU機能リスト](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list)を参照してください。 |
 | -code | PTXをアセンブルおよび最適化するNVIDIA GPUの名前を指定します。サポートされている仮想アーキテクチャのリストについては、[仮想アーキテクチャ機能リスト](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#virtual-architecture-feature-list)を、サポートされている実際のアーキテクチャのリストについては、[GPU機能リスト](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list)を参照してください。 |
-| -Xcompiler | コンパイラー/プリプロセッサーに直接オプションを指定します。 |
+| -Xcompiler | コンパイラー/プリプロセッサーに直接オプションを指定します。 | 
+...etc
+
+
+## GPU アーキテクチャ
+| Fermi | Kepler | Mawell | Pascal | Volta | Turing | Ampere | Hopper |
+|-|-|-|-|-|-|-|-|
+| sm_20 | sm_30 | sm_50 | sm_60 | sm_70 | sm_75 | sm_80 | sm_85 |
+| | sm_35 | sm_52 | sm_61 | sm_72 | | | |
+| | sm_37 | sm_53 | sm_62 | | | | |
+
+## SM (Streaming Multiprocessor)
+- CUDA core
+- shared memory / L1 cache
+- register
+- load / store unit
+- SFU(Special Function Unit)
+- Warp scheduler
