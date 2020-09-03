@@ -80,3 +80,11 @@ No kernels were profiled.
 - load / store unit
 - SFU(Special Function Unit)
 - Warp scheduler
+
+GPUのSMはそれぞれ数百ものスレッドの同時実行をサポートされています。
+カーネルグリッドが起動すると、そのカーネルグリッドのスレッドブロックが利用可能なSMに分愛された上で実行されます。
+
+## Warp
+CUDAはSIMT（Single Instruction Multiple Thread）を採用し、スレッドが``32``個ありこれをワープ（warp)と呼ばれるグループとされています。ワープ内のスレッドは全て同じ命令を同時実行します。スレッドはそれぞれ命令実行パスとレジスタ状態を持ち、独自のデータで現在の命令を実行します。
+
+## イベントとメトリック
