@@ -5,6 +5,23 @@
 nvcc -arch <最適化アーキテクチャ> <ソースファイル> -o <出力ファイル名>
 ```
 
+今回の環境ではCUDA10の環境のため以下のように実行する。
+```bash
+> nvcc main.cu -o hello -arch=sm_75
+> ./hello 
+Hello World from CPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+Hello World from GPU!
+```
+
 ## プロファイリング
 ``` 
 > nvprof ./hello
