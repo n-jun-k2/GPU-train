@@ -14,6 +14,7 @@ def auROC_plot(train, predictions):
 
     area_under_ROC = auc(fpr, tpr)
 
+    plt.clf()
     plt.figure()
     plt.plot(fpr, tpr, color='r', lw=2, label='ROC curve')
     plt.plot([0, 1], [0, 1], color='k', lw=2, linestyle='--')
