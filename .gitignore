@@ -179,3 +179,5 @@ dmypy.json
 *.app
 
 # End of https://www.toptal.com/developers/gitignore/api/c++
+
+*.png
