@@ -17,10 +17,13 @@ def scatter_plot(x_dataframe: pd.DataFrame, y_dataframe: pd.Series, algo_name: s
         algo_name：アルゴリズムの名前（グラフのタイトルになる)
 
     """
+    plt.clf()
     temp_df = pd.DataFrame(data=x_dataframe.loc[:, 0:1], index=x_dataframe.index)
     temp_df = pd.concat((temp_df, y_dataframe), axis=1, join="inner")
     temp_df.columns = ["First Vector", "Second Vector", "Label"]
-    sns.lmplot(x="First Vector", y="Second Vector", hue="Label", data=temp_df, fit_reg=False)
+    seaborn_plot = sns.lmplot(x="First Vector", y="Second Vector", hue="Label", data=temp_df, fit_reg=False)
 
     ax = plt.gca()
     ax.set_title("Separation of Observations usin " + algo_name)
+
+    seaborn_plot.savefig(f"{algo_name}.png")

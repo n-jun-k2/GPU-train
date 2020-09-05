@@ -20,6 +20,7 @@ def anomaly_score_plot(true_labels, scores, is_return_preds: bool = False):
     average_precision = \
         average_precision_score(preds['trueLabel'], preds['anomalyScore'])
 
+    plt.clf()
     plt.step(recall, precision, color='k', alpha=0.7, where='post')
     plt.fill_between(recall, precision, step='post', alpha=0.3, color='k')
 
