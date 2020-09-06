@@ -170,10 +170,10 @@ scatter_plot(x_train_mds, y_train, "MDS")
 from sklearn.manifold import LocallyLinearEmbedding
 
 lle = LocallyLinearEmbedding(n_neighbors=10, n_components=2, method='modified', random_state=2018, n_jobs=4)
-lle.fit(X_train.loc[0:5000, :])
+lle.fit(x_train.loc[0:5000, :])
 
-X_train_lle = lle.transform(X_train)
-X_train_lle = pd.DataFrame(data=X_train_lle, index=range(0, len(x_train)))
+x_train_lle = lle.transform(x_train)
+x_train_lle = pd.DataFrame(data=x_train_lle, index=range(0, len(x_train)))
 
 scatter_plot(x_train_lle, y_train, "LLE")
 
