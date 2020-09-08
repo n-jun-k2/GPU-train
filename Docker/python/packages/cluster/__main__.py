@@ -52,14 +52,18 @@ k平均法：
 from sklearn.cluster import KMeans
 
 n_clusters = 10
-kMeans_inertia = pd.DataFrame(data=[], index=range(2,21), columns=['inertia'])
+kMeans_inertia = pd.DataFrame(data=[], index=range(2,21), dtype='float32', columns=['inertia'])
 
 for n_clusters in range(2, 21):
     kmeans = KMeans(n_clusters=n_clusters, n_init=10, max_iter=300, tol=0.0001, random_state=2018)
     kmeans.fit(x_train_pca.loc[:, 0:99])
     kMeans_inertia.loc[n_clusters] = kmeans.inertia_
 
+print(f"kMeans_inertia({kMeans_inertia.inertia.dtype})")
+print(f"kMeans_inertia.index({kMeans_inertia.index})")
+
 # クラスタリングの場合次元数を任意に決めることが出来る為以下の様にグラフ出力し生成するべき適切なクラスタ数を見つけること。
-#sns.set()
-#sns.lineplot(data=kMeans_inertia, x=kMeans_inertia.index, y='inertia')
-#plt.show()
+plt.clf()
+sns.set()
+sns_plot = sns.lineplot(data=kMeans_inertia, x=kMeans_inertia.index, y='inertia')
+sns_plot.get_figure().savefig("inertia.png")
