@@ -4,6 +4,16 @@ Sample to develop a program using GPU on WSL2 Ubuntu.
 ## Setup WSL2
 Minimize the WSL2 Ubuntu environment([wsl_setup.md](./Doc/wsl_setup.md))
 
+## WSL operation
+```bash
+# Login to WSL
+> wsl
+# Root login
+> sudo -i
+[sudo] password for root:
+# start docker
+> service docker start
+```
 
 ## How to run
 Write the image and execution of each container to the makefile as needed.
