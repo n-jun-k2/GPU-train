@@ -24,6 +24,8 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 ## WSL update
 
 ```
+>wsl --set-default-version 2
+
 >wsl --update
 更新をチェック中...
 更新をダウンロード中...
@@ -89,3 +91,8 @@ NOTE: The CUDA Samples are not meant for performance measurements. Results may v
 
 Test passed
 ```
+
+# WslRegisterDistribution failed with error: 0x800706be.
+
+
+[ここ](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)からWSLのカーネルをアップデートすることで対応。
