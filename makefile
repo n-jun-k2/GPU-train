@@ -19,3 +19,4 @@ test:
 clean:
 	@docker rmi -f $(shell docker images -aq)
 	@docker volume rm $(shell docker volume ls -q)
+	@docker network prune
