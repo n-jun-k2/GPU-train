@@ -8,15 +8,18 @@ ENV GOOGLE_TEST_VERSION 1.8.0
 ENV PYTORCH_CUDA_VERSION 100
 ENV PYTORCH_VERSION 1.2.0
 
-RUN apt-get -y update && apt-get -y upgrade && \
-	apt-get install -y --no-install-recommends curl  \
-	build-essential \
-	zlib1g-dev \
-	libffi-dev \
-	zip \ 
-	unzip \
-	cmake
-
+RUN apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false  -y update \
+	&& apt-get -y upgrade \
+	&& apt-get install -y --no-install-recommends curl  \
+		ca-certificates \
+		build-essential \
+		zlib1g-dev \
+		libffi-dev \
+		zip \ 
+		unzip \
+		cmake \
+    && apt-get clean \
+    && rm -r /var/lib/apt/lists/*
 
 # BoostとGoogle testとPyTorchをダウンロードし解凍する。
 WORKDIR /tmp/libsrc
