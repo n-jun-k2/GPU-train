@@ -43,7 +43,8 @@ int main() {
     std::cout << "tensor_blob.t_ = "    << tensor_blob.t_()                     << std::endl;
     std::cout << "tensor_blob.t = "     << tensor_blob.t()                      << std::endl;
     std::cout << "tensor_blob[0] = "    << tensor_blob[0]                       << std::endl;
-    std::cout << "tensor_blob[0][2] = " << tensor_blob[0][1]                    << std::endl;
+    std::cout << "tensor_blob.size(0)=" << tensor_blob.size(0)                  << std::endl;
+    std::cout << "tensor_blob.size(1)=" << tensor_blob.size(1)                  << std::endl;
     std::cout << "b.sizes="             << intarrayref                          << std::endl;
     std::cout << "b.strides="           << strides                              << std::endl;
     std::cout << "b.is_same="           << tensor_b.is_same(tensor_a)           << std::endl;
@@ -66,6 +67,8 @@ int main() {
     std::cout << "b.has_storage="       << tensor_b.has_storage()               << std::endl;
     std::cout << "b.element_size="      << tensor_b.element_size()              << std::endl;
     std::cout << "b.storage_offset="    << tensor_b.storage_offset()            << std::endl;
+    std::cout << "b.toString="          << tensor_b.toString()                  << std::endl;
+    std::cout << "b.ndimension ="       << tensor_b.ndimension ()               << std::endl;
 
 
 }
