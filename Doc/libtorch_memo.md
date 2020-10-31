@@ -17,6 +17,26 @@ mkdir build
 cmake ..
 make
 ```
+
+## Options 
+tensorオブジェクトに対してのオプションは以下の項目がある。
+
+| item name | value |
+| ---  | --- |
+| dtype | ``kUInt8``, ``kInt8``, ``kInt16``, ``kInt32``, ``kInt64``, ``kFloat16`` ``kFloat32``, ``kFloat64`` or ``kU8``, ``kI8``, ``kI16``, ``kI32``, ``kI64``, ``kF16``, ``kF32``, ``kF64`` |
+| layout | ``kStrided``, ``kSparse`` |
+| device | ``kCPU``, ``kCUDA`` |
+| requires_grad | ``true``, ``false`` |
+
+### sample code
+```cpp
+auto options = torch::TensorOptions()
+                        .dtype(torch::kFloat32)
+                        .layout(torch::kStrided)
+                        .device(torch::kCUDA)
+                        .requires_grad(true);
+```
+
 ## Factory関数
 | function name | overview |
 | --- | --- |
