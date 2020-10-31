@@ -46,7 +46,8 @@ int main() {
 
     /*部分行列の作成*/
     auto tensor_B = torch::tensor({1, 2, 3, 4, 5, 6, 7, 8, 9}, CPU_OPTIONS).reshape({3, 3});
-    auto tensor_Bdash = tensor_B.slice(0, 1).slice(1, 1);
+    auto tensor_Bdash = tensor_B.slice(0, 1) //1行目削除
+                                .slice(1, 1);//1列目削除
     std::cout << "tensor_B" << std::endl;
     std::cout << tensor_B << std::endl;
     std::cout << "tensor_Bdash" << std::endl;
