@@ -2,7 +2,6 @@
 ## reference
 - [WSL command reference](https://docs.microsoft.com/ja-jp/windows/wsl/reference)
 - [Windows 10 updater](https://www.microsoft.com/ja-jp/software-download/windows10)
-- [WSL2 driver](https://developer.nvidia.com/cuda/wsl/download)
 - [Linux kernel update](https://docs.microsoft.com/ja-jp/windows/wsl/wsl2-kernel#download-the-linux-kernel-update-package)
 - [Nvidia driver for WSL](https://developer.nvidia.com/cuda/wsl/download)
 
@@ -25,7 +24,19 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 dism /online /Get-Features
 ```
 
+### Windows insider Program
+
+Please set the Insider program to the "dev" channel.
+![](./images/win_insider.png)
+
 ## WSL update
+
+step 1.
+![](./images/win_update1.png)
+step 2.
+![](./images/win_update2.png)
+
+After rebooting, execute the following command.
 
 ```
 >wsl --set-default-version 2
@@ -39,6 +50,15 @@ dism /online /Get-Features
 
 >wsl --shutdown
 ```
+
+# Install the Nvidia driver for WSL2
+- [Nvidia driver for WSL](https://developer.nvidia.com/cuda/wsl/download)
+
+![](./images/nvidia_install.png)
+
+## Install Ubuntu
+
+![](./images/ubuntu_install.png)
 
 ## Execute each script.
 Execute in the following order.
@@ -99,4 +119,8 @@ Test passed
 # WslRegisterDistribution failed with error: 0x800706be.
 
 
-[ここ](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)からWSLのカーネルをアップデートすることで対応。
+supported by updating the kernel of WSL from [here](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi).
+
+# If the GPU is not recognized on WSL2
+
+Reinstall the [Nvidia driver for WSL2](https://developer.nvidia.com/cuda/wsl/download) in Windows.
