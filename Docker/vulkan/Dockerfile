@@ -1,7 +1,9 @@
 FROM nvidia/vulkan:1.1.121-cuda-10.1-beta.1-ubuntu18.04
 
-ENV CMAKE_VERSION=3.15.2
-ENV CMAKE_MAJOR_VERSION=3.15
+ENV CMAKE_VERSION 3.15.2
+ENV CMAKE_MAJOR_VERSION 3.15
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/local/lib
+ENV VK_LAYER_PATH /usr/local/share/explicit_layer.d/
 
 RUN apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false  -y update \
     && apt-get -y upgrade \
@@ -10,9 +12,15 @@ RUN apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false  -y
         build-essential \
 		zlib1g-dev \
 		libffi-dev \
+        libx11-xcb-dev \
+        libxkbcommon-dev \
+        libmirclient-dev \
+        libwayland-dev \
+        libxrandr-dev \
 		zip \ 
 		unzip \
         wget \
+        git \
     && apt-get clean \
     && rm -r /var/lib/apt/lists/*
 
@@ -24,6 +32,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cm
     && cp cmake-${CMAKE_VERSION}-Linux-x86_64/bin/cmake /usr/local/bin \
     && mkdir -p /usr/local/share/cmake-${CMAKE_MAJOR_VERSION} \
     && cp -r cmake-${CMAKE_VERSION}-Linux-x86_64/share/cmake-${CMAKE_MAJOR_VERSION}/* /usr/local/share/cmake-${CMAKE_MAJOR_VERSION}
+
 
 WORKDIR /tmp
 RUN rm -rf /tmp/src
