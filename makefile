@@ -23,7 +23,7 @@ cpp-run:
 	@make run container=cpp mount=$(curdir)/Docker/cpp/src name=cpp
 
 vulkan-run:
-	@make run container=vulkan mount=$(curdir)/Docker/vulkan/src name=vulkan
+	@docker run --gpus all --name vulkan-gpu  -it --rm -v $(curdir)/Docker/vulkan/src:/tmp/project -v $(curdir)/Docker/vulkan/template:/tmp/template vulkan:$(cuda) /bin/bash
 
 python-all: python-build python-run
 
