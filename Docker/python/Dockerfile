@@ -48,6 +48,6 @@ RUN pip install -r requirements.txt && \
 WORKDIR /tmp
 RUN rm -rf ./libsrc/
 # Create working directory
-WORKDIR /tmp/python-app
+WORKDIR /tmp
 
 COPY packages ./

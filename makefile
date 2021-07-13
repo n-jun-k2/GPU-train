@@ -4,14 +4,32 @@ curdir := $(shell pwd)
 build:
 	@docker build -t $(name):$(cuda) $(curdir)/Docker/$(name)/.
 
+python-build:
+	@make build name=python
+
+cpp-build:
+	@make build name=cpp
+
+vulkan-build:
+	@make build name=vulkan
+
 run:
-	@docker run --gpus all --name $(container)-gpu -it $(name):$(cuda) /bin/bash
+	@docker run --gpus all --name $(container)-gpu -it --rm -v $(mount):/tmp $(name):$(cuda) /bin/bash
 
 python-run:
-	@docker run --gpus all --name python-gpu -it --rm -v $(curdir)/Docker/python/packages/:/tmp/python-app python:$(cuda) /bin/bash
+	@make run container=python mount=$(curdir)/Docker/python/packages/ name=python
 
-c-run:
-	@docker run --gpus all --name c-gpu -it --rm -v $(curdir)/Docker/c/src/:/tmp/src c:$(cuda) /bin/bash
+cpp-run:
+	@make run container=cpp mount=$(curdir)/Docker/cpp/src name=cpp
+
+vulkan-run:
+	@docker run --gpus all --name vulkan-gpu  -it --rm -v $(curdir)/Docker/vulkan/src:/tmp/project -v $(curdir)/Docker/vulkan/template:/tmp/template vulkan:$(cuda) /bin/bash
+
+python-all: python-build python-run
+
+cpp-all: cpp-build cpp-run
+
+vulkan-all: vulkan-build vulkan-run
 
 test:
 	@echo $(curdir)
