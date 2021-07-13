@@ -45,6 +45,7 @@ GPU-TRAIN
     ┃   ┃   ┃   ┗ ...
     ┃   ┃   ┣ Dockerfile
     ┃   ┃   ┗ README.md
+    ┃   ┣ vulkan /・・・・・・・・・・・ Build after WSL2 support. (vulkan is not supported.)
     ┃   ┗ python /・・・・・・・・ Project folder developed with python
     ┃       ┣ packages / Contains the application.
     ┃       ┃   ┣ ...
