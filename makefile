@@ -1,4 +1,4 @@
-$(eval cuda := cuda10.1)
+$(eval cuda := cuda11.0)
 curdir := $(shell pwd)
 
 build:
@@ -13,6 +13,9 @@ cpp-build:
 vulkan-build:
 	@make build name=vulkan
 
+hpc-build:
+	@make build name=hpc
+
 run:
 	@docker run --gpus all --name $(container)-gpu -it --rm -v $(mount):/tmp $(name):$(cuda) /bin/bash
 
@@ -25,11 +28,16 @@ cpp-run:
 vulkan-run:
 	@docker run --gpus all --name vulkan-gpu  -it --rm -v $(curdir)/Docker/vulkan/src:/tmp/project -v $(curdir)/Docker/vulkan/template:/tmp/template vulkan:$(cuda) /bin/bash
 
+hpc-run:
+	@docker run --gpus all --name hpc -it --rm -v $(curdir)/Docker/hpc/projects:/tmp/projects hpc:$(cuda) /bin/bash
+
 python-all: python-build python-run
 
 cpp-all: cpp-build cpp-run
 
 vulkan-all: vulkan-build vulkan-run
+
+hpc-all: hpc-build hpc-run
 
 test:
 	@echo $(curdir)
