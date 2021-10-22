@@ -2,6 +2,13 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
+#How do I add files without dots in them (all extension-less files) to the gitignore file?
+*
+!*/
+!*.*
+!Dockerfile
+!makefile
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
