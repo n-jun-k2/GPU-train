@@ -28,6 +28,29 @@ __host__ void CHECK(const cudaError_t err)
 }
 
 /**
+ * @brief Acquisition of resources related to CUDA is initialization
+ *
+ * @tparam T Specify the data type to reserve
+ * @tparam (*__cumalloc)(void**, size_t) Specify Malloc processing
+ * @tparam (*__cufree)(void*) Specify Free processing
+ * @param size Memory size to allocate (specify the number, not the byte size)
+ * @return __host__
+ */
+template<typename T, cudaError_t (*__cumalloc)(void**, size_t), cudaError_t (*__cufree)(void*)>
+__host__ std::shared_ptr<T> create_raii(const size_t size) {
+  static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
+  T* ptr;
+  CHECK(__cumalloc((void**)&ptr, sizeof(T) * size));
+
+  struct _free {
+    void operator()(T* p) const{
+      CHECK(__cufree(p));
+    }
+  };
+  return std::shared_ptr<T>(ptr, _free());
+}
+
+/**
  * @brief Create a Device Memory object
  *
  * @tparam T object type.
@@ -35,17 +58,20 @@ __host__ void CHECK(const cudaError_t err)
  * @return Pointer of device memory wrapped with shared_ptr.
  */
 template<typename T>
-__host__ std::shared_ptr<T> CreateDeviceMemory(const size_t size) {
-  static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
-  T* ptr;
-  CHECK(cudaMalloc((T**)&ptr, sizeof(T) * size));
+inline __host__ std::shared_ptr<T> CreateDeviceMemory(const size_t size) {
+  return create_raii<T, cudaMalloc, cudaFree>(size);
+}
 
-  struct _free {
-    void operator()(T* p) const{
-      CHECK(cudaFree(p));
-    }
-  };
-  return std::shared_ptr<T>(ptr, _free());
+/**
+ * @brief Create a Pin Memory object
+ *
+ * @tparam T object type.
+ * @param size Number of objects.
+ * @return Pointer of device memory wrapped with shared_ptr.
+ */
+template<typename T>
+inline __host__ std::shared_ptr<T> CreatePinedMemory(const size_t size) {
+  return create_raii<T, cudaMallocHost, cudaFreeHost>(size);
 }
 
 /**
@@ -85,7 +111,7 @@ __host__ std::string printHostMatrix2D(const std::vector<float>& vec, const size
 
 /**
  * @brief Returns the index of the best GPU device
- * 
+ *
  * @param suitableScore A function that returns the score for optimal conditions
  * @return std::size_t device index.
  */
