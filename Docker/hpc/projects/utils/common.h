@@ -28,53 +28,6 @@ __host__ void CHECK(const cudaError_t err)
 }
 
 /**
- * @brief Acquisition of resources related to CUDA is initialization
- *
- * @tparam T Specify the data type to reserve
- * @tparam (*__cumalloc)(void**, size_t) Specify Malloc processing
- * @tparam (*__cufree)(void*) Specify Free processing
- * @param size Memory size to allocate (specify the number, not the byte size)
- * @return __host__
- */
-template<typename T, cudaError_t (*__cumalloc)(void**, size_t), cudaError_t (*__cufree)(void*)>
-__host__ std::shared_ptr<T> create_raii(const size_t size) {
-  static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
-  T* ptr;
-  CHECK(__cumalloc((void**)&ptr, sizeof(T) * size));
-
-  struct _free {
-    void operator()(T* p) const{
-      CHECK(__cufree(p));
-    }
-  };
-  return std::shared_ptr<T>(ptr, _free());
-}
-
-/**
- * @brief Create a Device Memory object
- *
- * @tparam T object type.
- * @param size Number of objects.
- * @return Pointer of device memory wrapped with shared_ptr.
- */
-template<typename T>
-inline __host__ std::shared_ptr<T> CreateDeviceMemory(const size_t size) {
-  return create_raii<T, cudaMalloc, cudaFree>(size);
-}
-
-/**
- * @brief Create a Pin Memory object
- *
- * @tparam T object type.
- * @param size Number of objects.
- * @return Pointer of device memory wrapped with shared_ptr.
- */
-template<typename T>
-inline __host__ std::shared_ptr<T> CreatePinedMemory(const size_t size) {
-  return create_raii<T, cudaMallocHost, cudaFreeHost>(size);
-}
-
-/**
  * @brief Measures the processing time of the specified function and returns the result in milliseconds
  *
  * @param action Function pointer.
@@ -130,4 +83,71 @@ __host__ std::size_t suitableDeviceIndex(std::function<uint32_t(const cudaDevice
 
   auto it = std::max_element(std::begin(scores), std::end(scores));
   return std::distance(std::begin(scores), it);
+}
+
+
+template<typename RT>
+struct MallocFreeRetrun {
+
+	template<class...Args>
+	struct MallocAdditionalArguments {
+
+		template<class T, RT(*MALLOC)(T**, Args...), RT(*FREE)(T*)>
+		struct Factory
+		{
+			template<typename mT = T, std::enable_if_t<std::is_same_v<T, mT>>* = nullptr>
+			static  std::shared_ptr<mT> Make(Args... args) {
+				mT* obj;
+				MALLOC(&obj, args...);
+
+				struct __deleter__ {
+					void operator()(mT* ptr) const {
+						FREE(ptr);
+					}
+				};
+
+				return std::shared_ptr<T>(obj, __deleter__());
+			}
+
+			template<typename mT, std::enable_if_t<std::negation_v<std::is_same<T, mT>>>* = nullptr>
+			static  std::shared_ptr<mT> Make(Args... args) {
+				mT* obj;
+				MALLOC(reinterpret_cast<T**>(&obj), args...);
+
+				struct __deleter__ {
+					void operator()(mT* ptr) const {
+						FREE(reinterpret_cast<T*>(ptr));
+					}
+				};
+
+				return std::shared_ptr<mT>(obj, __deleter__());
+			}
+		};
+
+	};
+
+};
+
+/**
+ * @brief Create a Device Memory object
+ *
+ * @tparam T object type.
+ * @param size Number of objects.
+ * @return Pointer of device memory wrapped with shared_ptr.
+ */
+template<typename T>
+inline __host__ std::shared_ptr<T> CreateDeviceMemory(const size_t size) {
+  return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t>::Factory<void, cudaMalloc, cudaFree>::Make<T>(sizeof(T) * size);
+}
+
+/**
+ * @brief Create a Pin Memory object
+ *
+ * @tparam T object type.
+ * @param size Number of objects.
+ * @return Pointer of device memory wrapped with shared_ptr.
+ */
+template<typename T>
+inline __host__ std::shared_ptr<T> CreatePinedMemory(const size_t size) {
+  return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t>::Factory<void, cudaMallocHost, cudaFreeHost>::Make<T>(sizeof(T) * size);
 }
