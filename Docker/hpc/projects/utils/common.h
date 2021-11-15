@@ -151,3 +151,17 @@ template<typename T>
 inline __host__ std::shared_ptr<T> CreatePinedMemory(const size_t size) {
   return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t>::Factory<void, cudaMallocHost, cudaFreeHost>::Make<T>(sizeof(T) * size);
 }
+
+
+/**
+ * @brief Create a Zero Copy Memory object
+ *
+ * @tparam T
+ * @tparam Flags cudaHostAllocDefault or cudaHostAllocPortable or cudaHostAllocWriteCombined or cudaHostAllocMapped
+ * @param size Number of objects.
+ * @return Pointer of device memory wrapped with shared_ptr.
+ */
+template<typename T, int Flags = cudaHostAllocMapped>
+inline __host__ std::shared_ptr<T> CreateZeroCopyMemory(const size_t size) {
+  return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t, unsigned int>::Factory<void, cudaHostAlloc, cudaFreeHost>::Make<T>(sizeof(T) * size, static_cast<unsigned int>(Flags));
+}
