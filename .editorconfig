@@ -3,7 +3,7 @@
 # top-most EditorConfig file
 root = true
 
-[*.{c,h,cpp,hpp,cu}]
+[*.{c,h,cpp,hpp,cu,cuh}]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = false
