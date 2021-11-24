@@ -32,9 +32,9 @@ int main(int argc, char **argv) {
   unsigned long long value = tp_msec.count();
 
 
-  auto devA = CreateDeviceMemory<float>(nElem);
-  auto devB = CreateDeviceMemory<float>(nElem);
-  auto devC = CreateDeviceMemory<float>(nElem);
+  auto devA = createDeviceMemory<float>(nElem);
+  auto devB = createDeviceMemory<float>(nElem);
+  auto devC = createDeviceMemory<float>(nElem);
 
   rand_generator_kernel<<<block, grid>>>(value, devA.get());
   rand_generator_kernel<<<block, grid>>>(value, devB.get());
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
   CHECK(cudaDeviceSynchronize());
 
   /* check device memory
-  auto pin = CreatePinedMemory<float>(nElem);
+  auto pin = createPinedMemory<float>(nElem);
   CHECK(cudaMemcpy(pin.get(), devA.get(), sizeof(float) * nElem, cudaMemcpyDeviceToHost));
   for(auto i = 0; i < 3; ++i)
     std::cout << "head values :[" << i << "]:" << *(pin.get() + i) << std::endl;

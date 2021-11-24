@@ -92,8 +92,8 @@ int main(int argc, char **argv) {
     dim3 grid((size + block.x - 1) / block.x, 1);
     std::cout << "grid " << grid.x << " block " << block.x << std::endl;
 
-    auto d_idata = CreateDeviceMemory<int>(size);
-    auto d_odata = CreateDeviceMemory<int>(size);
+    auto d_idata = createDeviceMemory<int>(size);
+    auto d_odata = createDeviceMemory<int>(size);
 
     int cpu_sum = 0;
     auto cpu_sum_time = elapsedSecondAction([&](){

@@ -41,7 +41,7 @@ __global__ void SumArraysOnGPU(float *a, float *b, float *c) {
 }
 
 template<typename T>
-__host__ std::shared_ptr<T> CreateDeviceMemory(const size_t byte_size) {
+__host__ std::shared_ptr<T> createDeviceMemory(const size_t byte_size) {
   static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
   T* ptr;
   CHECK(cudaMalloc((T**)&ptr, byte_size));
@@ -81,9 +81,9 @@ int main(int argc, char  **argv) {
   rand_generate(std::begin(h_B_vector), std::end(h_B_vector));
   {
     const uint32_t byte_size = sizeof(float) * element_size;
-    auto d_A_vector = CreateDeviceMemory<float>(byte_size);
-    auto d_B_vector = CreateDeviceMemory<float>(byte_size);
-    auto d_C_vector = CreateDeviceMemory<float>(byte_size);
+    auto d_A_vector = createDeviceMemory<float>(byte_size);
+    auto d_B_vector = createDeviceMemory<float>(byte_size);
+    auto d_C_vector = createDeviceMemory<float>(byte_size);
 
     CHECK(cudaMemcpy(d_A_vector.get(), h_A_vector.data(), byte_size, cudaMemcpyHostToDevice));
     CHECK(cudaMemcpy(d_B_vector.get(), h_B_vector.data(), byte_size, cudaMemcpyHostToDevice));

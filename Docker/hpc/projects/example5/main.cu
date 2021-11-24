@@ -16,7 +16,7 @@ __host__ void CHECK(const cudaError_t err)
 }
 
 template<typename T>
-__host__ std::shared_ptr<T> CreateDeviceMemory(const size_t byte_size) {
+__host__ std::shared_ptr<T> createDeviceMemory(const size_t byte_size) {
   static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
   T* ptr;
   CHECK(cudaMalloc((T**)&ptr, byte_size));
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 
     std::vector<float> gpuRef_vector(n_elem);
     const uint32_t byte = sizeof(float) * n_elem;
-    auto d_vector = CreateDeviceMemory<float>(byte);
+    auto d_vector = createDeviceMemory<float>(byte);
 
     setupDeviceMemory<<<grid, block>>>(d_vector.get());
 

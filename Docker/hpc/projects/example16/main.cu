@@ -68,9 +68,9 @@ int main(int argc, char **argv) {
   std::cout << "host sum = " << hostSum << std::endl;
 
   {
-    auto d_A = CreateDeviceMemory<float>(static_cast<size_t>(nElem));
-    auto d_B = CreateDeviceMemory<float>(static_cast<size_t>(nElem));
-    auto d_C = CreateDeviceMemory<float>(static_cast<size_t>(nElem));
+    auto d_A = createDeviceMemory<float>(static_cast<size_t>(nElem));
+    auto d_B = createDeviceMemory<float>(static_cast<size_t>(nElem));
+    auto d_C = createDeviceMemory<float>(static_cast<size_t>(nElem));
 
     CHECK(cudaMemcpy(d_A.get(), h_A.data(), nBytes, cudaMemcpyHostToDevice));
     CHECK(cudaMemcpy(d_B.get(), h_B.data(), nBytes, cudaMemcpyHostToDevice));
@@ -88,8 +88,8 @@ int main(int argc, char **argv) {
 
     /* zero copy */
 
-    auto zeroHost_A = CreateZeroCopyMemory<float>(nElem);
-    auto zeroHost_B = CreateZeroCopyMemory<float>(nElem);
+    auto zeroHost_A = createZeroCopyMemory<float>(nElem);
+    auto zeroHost_B = createZeroCopyMemory<float>(nElem);
 
     memcpy(zeroHost_A.get(), h_A.data(), nBytes);
     memcpy(zeroHost_B.get(), h_B.data(), nBytes);

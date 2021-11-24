@@ -19,7 +19,7 @@ __host__ void CHECK(const cudaError_t err)
 }
 
 template<typename T>
-__host__ std::shared_ptr<T> CreateDeviceMemory(const size_t byte_size) {
+__host__ std::shared_ptr<T> createDeviceMemory(const size_t byte_size) {
   static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
   T* ptr;
   CHECK(cudaMalloc((T**)&ptr, byte_size));
@@ -86,9 +86,9 @@ int main(int argc, char **argv) {
 
   auto elapsed_time = elapsedSecondAction([&](){
 
-    auto d_mtx_a = CreateDeviceMemory<float>(bytes);
-    auto d_mtx_b = CreateDeviceMemory<float>(bytes);
-    auto d_mtx_c = CreateDeviceMemory<float>(bytes);
+    auto d_mtx_a = createDeviceMemory<float>(bytes);
+    auto d_mtx_b = createDeviceMemory<float>(bytes);
+    auto d_mtx_c = createDeviceMemory<float>(bytes);
     CHECK(cudaMemcpy(d_mtx_a.get(), mtx_A.data(), bytes, cudaMemcpyHostToDevice));
     CHECK(cudaMemcpy(d_mtx_b.get(), mtx_B.data(), bytes, cudaMemcpyHostToDevice));
     CHECK(cudaMemcpy(d_mtx_c.get(), mtx_C.data(), bytes, cudaMemcpyHostToDevice));

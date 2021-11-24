@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   {
     dim3 block(block_size);
     dim3 grid((size + block.x - 1) / block.x, 1);
-    auto d_C = CreateDeviceMemory<float>(size);
+    auto d_C = createDeviceMemory<float>(size);
 
     std::cout << "Execution configure (block " << block.x << " " << grid.x << ")" << std::endl;
     auto kernel_time = elapsedSecondAction([&](){

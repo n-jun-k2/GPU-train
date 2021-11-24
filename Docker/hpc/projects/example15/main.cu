@@ -18,8 +18,8 @@ int main(int argc, char **argv) {
   {
     const unsigned int isize = 1 << 22;
     const unsigned int nbyte = isize * sizeof(float);
-    auto pin_a = CreatePinedMemory<float>(isize);
-    auto dev_a = CreateDeviceMemory<float>(isize);
+    auto pin_a = createPinedMemory<float>(isize);
+    auto dev_a = createDeviceMemory<float>(isize);
 
     memset(pin_a.get(), 0, nbyte);
 

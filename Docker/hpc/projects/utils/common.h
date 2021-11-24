@@ -136,7 +136,7 @@ struct MallocFreeRetrun {
  * @return Pointer of device memory wrapped with shared_ptr.
  */
 template<typename T>
-inline __host__ std::shared_ptr<T> CreateDeviceMemory(const size_t size) {
+inline __host__ std::shared_ptr<T> createDeviceMemory(const size_t size) {
   return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t>::Factory<void, cudaMalloc, cudaFree>::Make<T>(sizeof(T) * size);
 }
 
@@ -148,7 +148,7 @@ inline __host__ std::shared_ptr<T> CreateDeviceMemory(const size_t size) {
  * @return Pointer of device memory wrapped with shared_ptr.
  */
 template<typename T>
-inline __host__ std::shared_ptr<T> CreatePinedMemory(const size_t size) {
+inline __host__ std::shared_ptr<T> createPinedMemory(const size_t size) {
   return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t>::Factory<void, cudaMallocHost, cudaFreeHost>::Make<T>(sizeof(T) * size);
 }
 
@@ -162,6 +162,19 @@ inline __host__ std::shared_ptr<T> CreatePinedMemory(const size_t size) {
  * @return Pointer of device memory wrapped with shared_ptr.
  */
 template<typename T, int Flags = cudaHostAllocMapped>
-inline __host__ std::shared_ptr<T> CreateZeroCopyMemory(const size_t size) {
+inline __host__ std::shared_ptr<T> createZeroCopyMemory(const size_t size) {
   return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t, unsigned int>::Factory<void, cudaHostAlloc, cudaFreeHost>::Make<T>(sizeof(T) * size, static_cast<unsigned int>(Flags));
+}
+
+/**
+ * @brief Create unified memory
+ *
+ * @tparam T Type of object to generate
+ * @tparam Flags Must be either cudaMemAttachGlobal or cudaMemAttachHost (defaults to cudaMemAttachGlobal)
+ * @param size Number of objects.
+ * @return Pointer of device memory wrapped with shared_ptr.
+ */
+template<typename T, int Flags = cudaMemAttachGlobal>
+inline __host__ std::shared_ptr<T> createUnifiedMemory(const size_t size) {
+  return MallocFreeRetrun<cudaError_t>::MallocAdditionalArguments<size_t, unsigned int>::Factory<void, cudaMallocManaged, cudaFree>::Make<T>(sizeof(T) * size, static_cast<unsigned int>(Flags));
 }

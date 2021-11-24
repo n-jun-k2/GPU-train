@@ -20,7 +20,7 @@ __host__ void CHECK(const cudaError_t err)
 
 
 template<typename T>
-__host__ std::shared_ptr<T> CreateDeviceMemory(const size_t byte_size) {
+__host__ std::shared_ptr<T> createDeviceMemory(const size_t byte_size) {
   static_assert(std::is_pointer<T>::value==false, "pointer support is not available.");
   T* ptr;
   CHECK(cudaMalloc((T**)&ptr, byte_size));
@@ -49,7 +49,7 @@ __global__ void  printThreadIndex(float* A, const int w, const int h) {
   int iy = threadIdx.y + blockIdx.y * blockDim.y;
   int idx = iy * h + ix;
 
-  printf("thread id (%d, %d) block id (%d, %d) coordinate (%d, %d) global index %2d ival %2.1f\n", 
+  printf("thread id (%d, %d) block id (%d, %d) coordinate (%d, %d) global index %2d ival %2.1f\n",
     threadIdx.x, threadIdx.y,
     blockIdx.x, blockIdx.y,
     ix, iy, idx, A[idx]);
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
   std::cout << std::endl << printHostMatrix(mtx_A, width, heigth) << std::endl;
 
   {
-    auto d_mtx_a = CreateDeviceMemory<float>(bytes);
+    auto d_mtx_a = createDeviceMemory<float>(bytes);
     CHECK(cudaMemcpy(d_mtx_a.get(), mtx_A.data(), bytes, cudaMemcpyHostToDevice));
 
     dim3 block(4, 2);

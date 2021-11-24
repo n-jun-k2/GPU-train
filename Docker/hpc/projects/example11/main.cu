@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   dim3 block(32, 1);
   dim3 grid(2, 1);
   {
-    auto d_C = CreateDeviceMemory<float>();
+    auto d_C = createDeviceMemory<float>();
     thread_synce_test <<<grid, block>>>(d_C.get());
   }
 
