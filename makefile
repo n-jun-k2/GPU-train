@@ -29,7 +29,7 @@ vulkan-run:
 	@docker run --gpus all --name vulkan-gpu  -it --rm -v $(curdir)/Docker/vulkan/src:/tmp/project -v $(curdir)/Docker/vulkan/template:/tmp/template vulkan:$(cuda) /bin/bash
 
 hpc-run:
-	@docker run --gpus all --name hpc -it --rm -v $(curdir)/Docker/hpc/projects:/tmp/projects hpc:$(cuda) /bin/bash
+	@docker run --gpus all --name hpc -it --rm -v $(curdir)/Docker/hpc/projects:/tmp/projects -v $(curdir)/Docker/hpc/templates:/tmp/templates hpc:$(cuda) /bin/bash
 
 python-all: python-build python-run
 
