@@ -24,18 +24,19 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 dism /online /Get-Features
 ```
 
-### Windows insider Program
+### Windows insider Program (Optional)
 
 Please set the Insider program to the "dev" channel.
 ![](./images/win_insider.png)
 
-## WSL update
+## WSL update (Optional)
 
 step 1.
 ![](./images/win_update1.png)
 step 2.
 ![](./images/win_update2.png)
 
+### WSL Update
 After rebooting, execute the following command.
 
 ```
