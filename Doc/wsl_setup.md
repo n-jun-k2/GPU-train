@@ -52,7 +52,7 @@ After rebooting, execute the following command.
 ```
 
 # Install the Nvidia driver for WSL2
-- [Nvidia driver for WSL](https://developer.nvidia.com/cuda/wsl/download)
+- [Nvidia driver for WSL](https://developer.nvidia.com/cuda/wsl)
 
 ![](./images/nvidia_install.png)
 
