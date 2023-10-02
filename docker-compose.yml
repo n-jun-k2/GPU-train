@@ -1,0 +1,16 @@
+services:
+  python:
+    build:
+      context: ./Docker/python
+    volumes:
+      - ./Docker/python/packages:/packages
+      - /usr/share/zoneinfo/Asia/Tokyo:/etc/localtime:ro
+    tty: true
+    working_dir: /packages
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

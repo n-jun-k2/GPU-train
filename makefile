@@ -1,4 +1,4 @@
-$(eval cuda := cuda11.0)
+$(eval cuda := cuda11.6)
 curdir := $(shell pwd)
 
 build:
