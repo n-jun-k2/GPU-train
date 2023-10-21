@@ -1,0 +1,51 @@
+FROM mcr.microsoft.com/quantum/iqsharp-base:0.28.277227
+
+ENV PYTHON_VERSION 3.11.5
+ENV PYTHON_MAJOR_VERSION 3.11
+
+USER root
+
+WORKDIR /tmp
+
+RUN apt-get -y update \
+    && apt-get install -y --no-install-recommends  \
+        xz-utils \
+        build-essential \
+        zlib1g-dev \
+        libncurses5-dev \
+        libncursesw5-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        libgdbm-dev \
+        libdb5.3-dev \
+        libbz2-dev \
+        libexpat1-dev \
+        liblzma-dev \
+        tk-dev \
+        libffi-dev\
+        libssl-dev \
+	&& apt-get clean \
+    && rm -r /var/lib/apt/lists/*
+
+RUN curl -OL https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-${PYTHON_VERSION}.tar.xz \
+	&& tar xJf Python-${PYTHON_VERSION}.tar.xz \
+	&& cd ./Python-${PYTHON_VERSION} \
+	&& ./configure --enable-optimizations \
+	&& make -s \
+	&& make altinstall \
+    && cd - \
+    && rm Python-${PYTHON_VERSION}.tar.xz\
+    && rm -rf ./Python-${PYTHON_VERSION}\
+	&& cd /usr/local/bin \
+	&& ln -sf pip${PYTHON_MAJOR_VERSION} pip \
+	&& ln -sf python${PYTHON_MAJOR_VERSION}-config python-config\
+	&& ln -sf idle${PYTHON_MAJOR_VERSION} idle \
+	&& ln -sf pydoc${PYTHON_MAJOR_VERSION} pydoc \
+	&& ln -sf python${PYTHON_MAJOR_VERSION} python
+
+COPY requirements.txt .
+COPY import.pth .
+RUN pip install -r requirements.txt \
+    && mv -f import.pth $(python -c 'import sys; print(sys.path)' | grep -o "[^']*site-packages")/import.pth
+
+USER jovyan

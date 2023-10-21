@@ -1,14 +1,12 @@
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
-
-ENV TZ Asia/Tokyo
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
 ENV BOOST_VERSION 1.70.0
 ENV BOOST_FILE_VERSION 1_70_0
 ENV GOOGLE_TEST_VERSION 1.8.0
-ENV PYTORCH_CUDA_VERSION 100
-ENV PYTORCH_VERSION 1.2.0
+ENV PYTORCH_CUDA_VERSION 118
 
-RUN apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false  -y update \
+RUN chmod 1777 /tmp\
+	&& apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false  -y update \
 	&& apt-get -y upgrade \
 	&& apt-get install -y --no-install-recommends curl  \
 		ca-certificates \
@@ -28,8 +26,8 @@ RUN curl -OL https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}
     && curl -OL https://github.com/google/googletest/archive/release-${GOOGLE_TEST_VERSION}.tar.gz \
     && tar -zxvf release-${GOOGLE_TEST_VERSION}.tar.gz \
     && mkdir ./googletest-release-${GOOGLE_TEST_VERSION}/build \
-	&& curl -OL https://download.pytorch.org/libtorch/nightly/cu${PYTORCH_CUDA_VERSION}/libtorch-cxx11-abi-shared-with-deps-${PYTORCH_VERSION}.zip \
-	&& unzip libtorch-cxx11-abi-shared-with-deps-${PYTORCH_VERSION}.zip
+	&& curl -OL https://download.pytorch.org/libtorch/cu${PYTORCH_CUDA_VERSION}/libtorch-win-shared-with-deps-2.0.1%2Bcu${PYTORCH_CUDA_VERSION}.zip \
+	&& unzip libtorch-win-shared-with-deps-2.0.1%2Bcu${PYTORCH_CUDA_VERSION}.zip
 
 # Google testのインストール
 WORKDIR /tmp/libsrc/googletest-release-${GOOGLE_TEST_VERSION}/build

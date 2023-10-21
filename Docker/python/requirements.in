@@ -6,5 +6,7 @@ scipy
 joblib
 scikit-learn
 Cython
+dash
+networkx
 
 pytest

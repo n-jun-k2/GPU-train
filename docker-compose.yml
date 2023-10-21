@@ -14,3 +14,35 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+  cpp:
+    build:
+      context: ./Docker/cpp
+    volumes:
+      - ./Docker/cpp/src:/src
+      - /usr/share/zoneinfo/Asia/Tokyo:/etc/localtime:ro
+    tty: true
+    working_dir: /src
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  q:
+    build: 
+      context: ./Docker/q
+    working_dir: /app
+    tty: false
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./Docker/q/src:/app
+      - ./Docker/q/packages:/pypackages
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
