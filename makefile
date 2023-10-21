@@ -1,4 +1,4 @@
-$(eval cuda := cuda11.6)
+$(eval cuda := cuda12.2)
 curdir := $(shell pwd)
 
 include ./Docker/q/makefile
