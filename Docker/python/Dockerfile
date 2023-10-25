@@ -12,6 +12,7 @@ RUN chmod 1777 /tmp \
 		ca-certificates \
 		libsqlite3-dev \
 		libssl-dev \
+		liblzma-dev \
 	&& apt-get clean \
     && rm -r /var/lib/apt/lists/*
 
