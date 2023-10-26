@@ -23,10 +23,10 @@
         H(q);
     }
 
-    operation Write(q: Qubit, value: Result) : Unit {
-        let a = LambdaOperationAction(x => Message($"{x}"));
-        a::Apply(q);
-    }
+    // operation Write(q: Qubit, value: Result) : Unit {
+    //     let a = LambdaOperationAction(x => Message($"{x}"));
+    //     a::Apply(q);
+    // }
 
     operation GenerateRandom(size: Int): Bool[] {
         use qs = Qubit[size];
@@ -690,20 +690,54 @@
         ResetAll([a, b, c]);
     }
 
-    operation Increment(register: Qubit[]): Unit is Adj + Ctl {
-        let maxIndex = Length(register) - 1;
-        for idx in maxIndex..-1..1 {
-            Controlled X(register[0..idx - 1], register[idx]);
+    // # Summary
+    // forループで利用する配列のMaxインデックスを取得
+    function MaxRangeIndex<'T>(register: 'T[]): Int {
+        return Length(register) - 1;
+    }
+
+    operation ControlledAreaNot(register: Qubit[], area: Range): Unit is Adj + Ctl {
+        for idx in area {
+            Controlled X(register[...(idx-1)], register[idx]);
         }
+    }
+
+    // # Summary
+    // 量子インクリメント処理の前処理
+    //
+    // # Input
+    // - register (Qubit[]): インクリメント処理を行いたいQubit配列を指定
+    // - minIndex (Int): 0以上、Length(register)より小さい数を指定
+    //
+    operation PreIncrement(register: Qubit[], minIndex: Int): Unit is Adj + Ctl {
+        let maxIndex = Length(register) - 1;
+        ControlledAreaNot(register, maxIndex..-1..minIndex);
+    }
+
+    // # Summary
+    // 量子インクリメント処理
+    operation Increment(register: Qubit[]): Unit is Adj + Ctl {
+        PreIncrement(register, 1);
         X(register[0]);
     }
 
-    operation Decrement(register: Qubit[]): Unit is Adj + Ctl {
+    // # Summary
+    // 量子デクリメント処理の前処理
+    //
+    // # Input
+    // - register (Qubit[]): デクリメント処理を行いたいQubit配列を指定
+    // - minIndex (Int): 0以上、Length(register)より小さい数を指定
+    //
+    operation PreDecrement(register: Qubit[], minIndex: Int): Unit is Adj + Ctl {
         let maxIndex = Length(register) - 1;
+        ControlledAreaNot(register, minIndex..maxIndex);
+    }
+
+    // # Summary
+    // 量子デクリメント処理
+    operation Decrement(register: Qubit[]): Unit is Adj + Ctl {
         X(register[0]);
-        for idx in 1..maxIndex {
-            Controlled X(register[0..idx - 1], register[idx]);
-        }
+        PreDecrement(register, 1);
     }
 
     operation NibbleMain(): Unit{
@@ -732,27 +766,19 @@
     }
 
     /// # Summary
-    /// 加算代入処理(a += b)
-    operation Addition(a: Qubit[], b: Qubit[]): Unit is Adj + Ctl {
-        let start = Length(a) - 1;
-
-        for bIdx in IndexRange(b) {
-            let stop = bIdx + 1;
-            let addBit = [b[bIdx]];
-            for notIdx in start..-1..stop {
-                let control = Flattened([a[bIdx..notIdx - 1], addBit]);
-                Controlled X(control, a[notIdx]);
-            }
-            Controlled X(addBit, a[bIdx]);
-        }
-
-    }
-
-    /// # Summary
     /// 符号反転処理
     operation NegativeSign(qubit: Qubit[]): Unit is Adj + Ctl {
         ApplyToEachCA(X, qubit);
         Increment(qubit);
+    }
+
+    /// # Summary
+    /// 加算代入処理(逆順序で減算代入)
+    operation Addtion(a: Qubit[], b: Qubit[]): Unit is Adj + Ctl {
+        let upperControl = Flattened([[b[0]], a]);
+        PreIncrement(upperControl, 1);
+        let bottomControl = Flattened([[b[1]], a[1...]]);
+        PreIncrement(bottomControl, 1);
     }
 
     @EntryPoint()
@@ -772,14 +798,31 @@
         H(bQunibble[1]);
         R1(prepareBAngle, bQunibble[1]);
 
-        DumpRegister((), aQunibble);
+        Addtion(aQunibble, bQunibble);
 
-        Addition(aQunibble, bQunibble);
-
-        DumpRegister((), aQunibble);
+        DumpMachine();
 
         ResetAll(aQunibble);
         ResetAll(bQunibble);
+    }
+
+    // #Summary
+    // 二乗代入 (a += b*b)
+    // # Input
+    // - a (Qubit[]): 二乗の代入先
+    // - b (Qubit[]): 二乗対象
+    operation Squared(a: Qubit[], b: Qubit[]): Unit is Adj + Ctl {
+        let upperControl = Flattened([[b[0]], a]);
+        PreIncrement(upperControl, 1);
+        let betweenControl = Flattened([b[...1], a[1...]]);
+        PreIncrement(betweenControl, 2);
+        PreIncrement(betweenControl, 2);
+        let bottomControl = Flattened([[b[0]], a[2...]]);
+        PreIncrement(bottomControl, 1);
+    }
+
+    operation SquaredMain(): Unit{
+
     }
 
 }

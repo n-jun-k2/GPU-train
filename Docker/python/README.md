@@ -7,3 +7,16 @@
 ```
 > OMP_NUM_THREADS=4 python script.py
 ```
+
+## hugging face login
+
+[Hugging Faceの設定](https://huggingface.co/settings/tokens)から"Access Tokens"を選択し
+User Access Tokensを作成します。
+
+作成後、CLIでトークンを指定
+
+```bash
+> huggingface-cli login --token <TOKEN>
+```
+
+ログイン後、PythonのAPIで操作が可能。

@@ -37,11 +37,13 @@ RUN curl -OL https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-
 	&& ln -s python${PYTHON_MAJOR_VERSION} python
 
 # pakage install
-COPY requirements.in ./
+COPY requirements.txt ./
 RUN pip install pip-tools \
-	&& pip-compile requirements.in \
 	&& pip-sync \
-	&& pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+	&& pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 
+
+COPY import.pth ./
+RUN mv -f import.pth $(python -c 'import sys; print(sys.path)' | grep -o "[^']*site-packages")/import.pth
 
 # インストール作業で出た一時的なファイルを削除
 # WORKDIR /src

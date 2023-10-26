@@ -4,7 +4,11 @@ services:
       context: ./Docker/python
     volumes:
       - ./Docker/python/packages:/packages
+      - ./Docker/python/model_store:/model_store
+      - ./Docker/python/data:/data
       - /usr/share/zoneinfo/Asia/Tokyo:/etc/localtime:ro
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
     tty: true
     working_dir: /packages
     deploy:

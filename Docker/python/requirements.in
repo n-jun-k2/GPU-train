@@ -10,3 +10,4 @@ dash
 networkx
 
 pytest
+huggingface_hub

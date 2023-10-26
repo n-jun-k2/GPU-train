@@ -190,3 +190,5 @@ dmypy.json
 
 bin/
 obj/
+
+Docker/python/packages/*.jpg

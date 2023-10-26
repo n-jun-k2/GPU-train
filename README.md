@@ -18,19 +18,24 @@ Minimize the WSL2 Ubuntu environment([wsl_setup.md](./Doc/wsl_setup.md))
 ## How to run
 Write the image and execution of each container to the makefile as needed.
 
-### for python 
+| service name | overview | volume path |
+|---|---|---|
+| python | ubuntu22.04+pytorch(2.1.0+cu118) environment| ./Docker/python/packages/ |
+| cpp | ubuntu22.04+cudnn8+nvcc+boost+PyTorch environment | ./Docker/cpp/src/ |
+| q | Q# Execution environment + Python environment | ./Docker/q/packages/ , ./Dockerq/src/|
+
 ```bash
-# Build Docker image
-make build name=python
-# Start and login container
-make python-run
-```
-### for C lang
-```bash
-# Build Docker image
-make build name=c
-# Start and login container
-make c-run
+# launch a container 
+user:GPU-train# docker compose up -d <service name>
+
+## Example python container
+user:GPU-train# docker compose up -d python
+
+[+] Running 2/2
+ ✔ Network gpu-train_default     Created                                                                                               0.0s 
+ ✔ Container gpu-train-python-1  Started                                                                                               0.0s
+user:GPU-train$ docker compose exec python bash
+root@b1dfb96230f6:/packages#
 ```
 
 ## Folder structure
@@ -45,15 +50,18 @@ GPU-TRAIN
     ┃   ┃   ┃   ┗ ...
     ┃   ┃   ┣ Dockerfile
     ┃   ┃   ┗ README.md
-    ┃   ┣ vulkan /・・・・・・・・・・・ Build after WSL2 support. (vulkan is not supported.)
-    ┃   ┗ python /・・・・・・・・ Project folder developed with python
-    ┃       ┣ packages / Contains the application.
-    ┃       ┃   ┣ ...
-    ┃       ┃   ┗ ...
-    ┃       ┣ .gitignore
-    ┃       ┣ Dockerfile
-    ┃       ┗ requirements.txt
-    ┃
+    ┃   ┣  python /・・・・・・・・ Project folder developed with python
+    ┃   ┃    ┣ packages / Contains the application.
+    ┃   ┃    ┃   ┣ ...
+    ┃   ┃    ┃   ┗ ...
+    ┃   ┃    ┣ .gitignore
+    ┃   ┃    ┣ Dockerfile
+    ┃   ┃    ┗ requirements.txt
+    ┃   ┗  q /
+    ┃      ┣ packages /
+    ┃      ┣ src /
+    ┃      ┣ dockerfile
+    ┃      ┗ requirements.txt
     ┣ scripts
     ┣ LICENSE
     ┣ makefile
