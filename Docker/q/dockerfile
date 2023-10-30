@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/quantum/iqsharp-base:0.28.277227
+FROM mcr.microsoft.com/quantum/iqsharp-base:0.28.302812
 
 ENV PYTHON_VERSION 3.11.5
 ENV PYTHON_MAJOR_VERSION 3.11

@@ -1,6 +1,7 @@
 ﻿namespace TestCode {
 
     open Microsoft.Quantum.Canon;
+    open Microsoft.Quantum.Logical; // EqualB
     open Microsoft.Quantum.Convert; // ResultArrayAsBoolArray 
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Diagnostics; // DumpMachine
@@ -781,7 +782,6 @@
         PreIncrement(bottomControl, 1);
     }
 
-    @EntryPoint()
     operation AddMain(): Unit {
         let prepareAAngle = DegToRad(45.0);
         let prepareBAngle = DegToRad(90.0);
@@ -806,23 +806,30 @@
         ResetAll(bQunibble);
     }
 
-    // #Summary
-    // 二乗代入 (a += b*b)
-    // # Input
-    // - a (Qubit[]): 二乗の代入先
-    // - b (Qubit[]): 二乗対象
-    operation Squared(a: Qubit[], b: Qubit[]): Unit is Adj + Ctl {
-        let upperControl = Flattened([[b[0]], a]);
-        PreIncrement(upperControl, 1);
-        let betweenControl = Flattened([b[...1], a[1...]]);
-        PreIncrement(betweenControl, 2);
-        PreIncrement(betweenControl, 2);
-        let bottomControl = Flattened([[b[0]], a[2...]]);
-        PreIncrement(bottomControl, 1);
-    }
+    @EntryPoint()
+    operation IntegerMain(): Unit{
+        let bitSize = 3;
+        use a = Qubit[bitSize];
+        use b = Qubit[bitSize];
 
-    operation SquaredMain(): Unit{
+        let aE = LittleEndian(a);
+        let bE = LittleEndian(b);
 
+        // |1> + |5>
+        // X(a[0]);
+        H(a[0]);
+
+        // |1> + |3>
+        // X(b[0]);
+        // H(b[1]);
+
+        // AddI(aE, bE);
+        IncrementByInteger(5, aE);
+
+        DumpRegister((), a);
+        let result = MeasureInteger(aE);
+        Message($"result = {result}");
+        ResetAll(Flattened([a, b]));
     }
 
 }
