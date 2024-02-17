@@ -8,7 +8,8 @@
     open Microsoft.Quantum.Measurement; // for MultiM
     open Microsoft.Quantum.Arithmetic; // LittleEndian
     open Microsoft.Quantum.Math;
-    open Microsoft.Quantum.Arrays; // IndexRange
+    open Microsoft.Quantum.Arrays; // IndexRang
+    open Microsoft.Quantum.Preparation; // PrepareArbitraryStateCP
 
     newtype LambdaOperationAction = (Apply: (Qubit) => Unit);
     newtype OracleType = (action: (Qubit) => Unit is Adj + Ctl);
@@ -806,31 +807,498 @@
         ResetAll(bQunibble);
     }
 
-    @EntryPoint()
+    operation IncrementMain(): Unit {
+        let bitSize = 3;
+
+        // a = α|0> + β|1>
+        use a = Qubit[bitSize];
+        H(a[0]);
+        DumpMachine();
+        Message("");
+
+        let aLEHandler = LittleEndian(a);
+
+        IncrementByInteger(1, aLEHandler);
+        ApplyPhaseLEOperationOnLECA(IncrementPhaseByInteger(2, _), aLEHandler);
+
+        DumpMachine();
+        let result = MeasureInteger(aLEHandler);
+        Message($"result = {result}");
+
+        ResetAll(a);
+    }
+
     operation IntegerMain(): Unit{
         let bitSize = 3;
         use a = Qubit[bitSize];
         use b = Qubit[bitSize];
 
-        let aE = LittleEndian(a);
-        let bE = LittleEndian(b);
+        let aLE = LittleEndian(a);
+        let bLE = LittleEndian(b);
 
         // |1> + |5>
-        // X(a[0]);
-        H(a[0]);
+        X(a[0]);
+        H(a[2]);
 
         // |1> + |3>
-        // X(b[0]);
-        // H(b[1]);
-
-        // AddI(aE, bE);
-        IncrementByInteger(5, aE);
+        X(b[0]);
+        H(b[1]);
 
         DumpRegister((), a);
-        let result = MeasureInteger(aE);
+        Message("===");
+        DumpRegister((), b);
+        Message("===");
+
+        AddI(bLE, aLE);
+
+        DumpMachine();
+        let abLE = LittleEndian(Flattened([a, b]));
+        let result = MeasureInteger(abLE);
         Message($"result = {result}");
         ResetAll(Flattened([a, b]));
     }
 
-}
+    operation QCondMain(): Unit {
+        // 量子条件付き実行
+        let bAngle = DegToRad(45.0);
+        let registerSize = 3;
+        use aQubit = Qubit[registerSize];
+        use bQubit = Qubit[registerSize];
 
+        X(aQubit[0]);
+        H(aQubit[2]);
+        DumpRegister((), aQubit);
+        Message("===");
+
+        X(bQubit[0]);
+        H(bQubit[1]);
+        T(bQubit[1]);
+        DumpRegister((), bQubit);
+        Message("===");
+
+        let aLE = LittleEndian(aQubit);
+        let bLE = LittleEndian(bQubit);
+        IncrementByInteger(-3, aLE);
+
+        // if(a < 0) then b++
+        Controlled IncrementByInteger([aQubit[2]], (1, bLE));
+
+        IncrementByInteger(3, aLE);
+
+        DumpMachine();
+
+        let abLE = LittleEndian(aQubit + bQubit);
+        let result = MeasureInteger(abLE);
+        Message($"result = {result}");
+
+        ResetAll(aQubit + bQubit);
+    }
+
+    operation QAddSquaredMain(): Unit {
+        let qSize = 4;
+        let qSquaredSize = 2;
+        use aQubit = Qubit[qSize];
+        use bQubit = Qubit[qSquaredSize];
+
+        X(Head(aQubit));
+        H(Tail(aQubit));
+        T(Tail(aQubit));
+        Message("Register A");
+        DumpRegister((), aQubit);
+
+        X(Head(bQubit));
+        H(Tail(bQubit));
+        T(Tail(bQubit));
+        Message("Register B");
+        DumpRegister((), bQubit);
+
+        use tempRegister = Qubit[qSquaredSize * 2];
+        SquareI(LittleEndian(bQubit), LittleEndian(tempRegister));
+        AddI(LittleEndian(tempRegister), LittleEndian(aQubit));
+        ResetAll(tempRegister);
+
+        Message("a += b * b");
+        DumpRegister((), aQubit + bQubit);
+
+        let result = MeasureInteger(LittleEndian(aQubit + bQubit));
+        Message($"result = {result}");
+
+        ResetAll(aQubit + bQubit);
+    }
+
+    operation PhaseEncodingMain(): Unit {
+        use (a, b) = (Qubit[3], Qubit[2]);
+
+        ApplyToEachCA(H, a[0..1]);
+        Message("Register A");
+        DumpRegister((), a);
+        
+        X(Head(b));
+        H(Tail(b));
+        Message("Register B");
+        DumpRegister((), b);
+
+        let aLE = LittleEndian(a);
+        let bLE = LittleEndian(b);
+
+        // a < 0の為の事前準備
+        IncrementByInteger(-3, aLE);
+        // b == 1の為の事前準備
+        let CFlipPhase = ControlledOnInt(1, Z);
+        // b == 1 Controlled Z(b, a[2]);
+        CFlipPhase(b, Tail(a));
+        // aを比較する為に変更した内容を戻す
+        IncrementByInteger(3, aLE);
+
+        Message("computation");
+        DumpMachine();
+
+        ResetAll(a + b);
+    }
+
+    operation InvertMain(): Unit {
+        use a = Qubit[3];
+        X(Head(a));
+        H(a[2]);
+        DumpMachine();
+        Message("---");
+
+        Invert2sSI(SignedLittleEndian(LittleEndian(a)));
+
+        DumpMachine();
+        ResetAll(a);
+    }
+
+    operation ScratchMain(): Unit {
+        use (a, scratch) = (Qubit[3], Qubit());
+        let aLE = LittleEndian(a);
+        ApplyToEachCA(H, a);
+
+        Message($"dump a");
+        DumpRegister((), a);
+
+        // abs(a);
+        CNOT(Tail(a), scratch);
+
+        // abs(a);
+        let aSLE = SignedLittleEndian(aLE);
+        Controlled Invert2sSI([scratch], (aSLE));
+        Message("dump full");
+        DumpMachine();
+
+        // abs(a) == 1 then Z(a);
+        ApplyToEachCA(X, a[1...]);
+        Controlled Z(a[0..1], a[2]);
+        ApplyToEachCA(X, a[1...]);
+
+
+        Message("dump full");
+        DumpMachine();
+
+        // uncompute abs(a)
+        Adjoint Controlled Invert2sSI([scratch], aSLE);
+        Adjoint CNOT(Tail(a), scratch);
+
+        Message("dump full");
+        DumpMachine();
+
+        ResetAll(a + [scratch]);
+    }
+
+    // # 位相反転
+    operation Flip(register: Qubit[], state: Int): Unit is Ctl+Adj {
+        let registerSize = Length(register);
+        let intMax = PowI(2, registerSize) - 1;
+        let bits = IntAsBoolArray(intMax - state, registerSize);
+        let bitAndQbitPair = Zipped(bits, register);
+
+        within {
+            ApplyToEachCA(ApplyIfCA(_, X, _), bitAndQbitPair);
+        } apply {
+            Controlled Z(MostAndTail(register));
+        }
+        // ApplyToEachCA(ApplyIfCA(_, X, _), bitAndQbitPair);
+    }
+
+
+    // # 鏡映演算　<位相差を振幅差に変換>
+    operation Mirror(register: Qubit[]): Unit is Ctl+Adj {
+        let HX = BoundCA([H, X]); 
+        within {
+            ApplyToEachCA(HX, register);
+        } apply {
+            Controlled Z(MostAndTail(register));
+        }
+    }
+
+    operation MagnitudeMain(): Unit {
+        let nibbleSize = 4;
+        use (a, b, c) = (Qubit[nibbleSize], Qubit[nibbleSize], Qubit[nibbleSize]);
+
+        ApplyToEachCA(H, a + b + c);
+
+        // |1>を反転。Marked value
+        ApplyToEachCA(X, a[1...]);
+        Controlled Z(MostAndTail(a));
+        ApplyToEachCA(X, a[1...]);
+        Mirror(a);
+        Message($"A register");
+        DumpRegister((), a);
+
+        // |3>を反転。Marked value
+        ApplyToEachCA(X, b[2...]);
+        Controlled Z(MostAndTail(b));
+        ApplyToEachCA(X, b[2...]);
+        Mirror(b);
+        Message($"B register");
+        DumpRegister((), b);
+
+        // |12>を反転。Marked value
+        ApplyToEachCA(X, c[...1]);
+        Controlled Z(MostAndTail(c));
+        ApplyToEachCA(X, c[...1]);
+        Mirror(c);
+        Message($"C register");
+        DumpRegister((), c);
+
+        ResetAll(a+b+c);
+    }
+
+    operation RepeatMirrorMain(): Unit {
+        use a = Qubit[4];
+
+        ApplyToEachCA(H, a);
+
+        // Marked value
+        Flip(a, 3);
+        // Mirror 
+        Mirror(a);
+        Message($"a register");
+        DumpRegister((), a);
+
+        // Marked value
+        Flip(a, 3);
+
+        // Mirror 
+        Mirror(a);
+        Message($"a register");
+        DumpRegister((), a);
+
+        ResetAll(a);
+    }
+
+    operation TwoMirrorMain(): Unit {
+        use a = Qubit[4];
+
+        ApplyToEachCA(H, a);
+
+        Flip(a, 3);
+        Flip(a, 7);
+
+        Mirror(a);
+
+        Flip(a, 3);
+        Flip(a, 7);
+
+        Mirror(a);
+        Message($"a register");
+        DumpMachine();
+
+        ResetAll(a);
+    }
+
+    operation AAMain(): Unit {
+        use a = Qubit[2];
+
+        // |0> + |3>
+        H(a[0]);
+        Controlled X([a[0]], a[1]);
+
+        // |0> + |2>
+        // X(a[1]);
+        // H(a[1]);
+
+        // |1> + |3>
+        // X(a[0]);
+        // H(a[1]);
+
+        // |1> + |2>
+        // H(a[0]);
+        // Controlled X([a[0]], a[1]);
+        // X(a[0]);
+
+        Mirror(a);
+
+        DumpMachine();
+        ResetAll(a);
+    }
+
+    operation DumpQFT(register: Qubit[]): Unit {
+        Adjoint QFTLE(LittleEndian(register));
+        Message("Dump");
+        DumpRegister((), register);
+        let frequency = MeasureInteger(LittleEndian(register));
+        Message($"frequency : {frequency}");
+    }
+
+    operation QFTMain() : Unit {
+        use (a, b, c) = (Qubit[4], Qubit[4], Qubit[4]);
+
+        ApplyToEachCA(H, a + b + c);
+
+        // Init state A
+        Z(a[0]);
+        DumpRegister((), a[...2]);
+
+        // Init state B
+        S(b[0]);
+        Z(b[1]);
+        // DumpRegister((), b[...2]);
+
+        T(c[0]);
+        S(c[1]);
+        Z(c[2]);
+        // DumpRegister((), c[...2]);
+        DumpQFT(b);
+
+        ResetAll(a + b + c);
+    }
+
+    operation QFT2Main(): Unit {
+        use a = Qubit[4];
+
+        ApplyToEachCA(H, a);
+
+        Z(a[1]);
+
+        Message("A register");
+        DumpMachine();
+
+        DumpQFT(a);
+
+        ResetAll(a);
+    }
+
+    operation FrequencyToState(): Unit {
+        use a = Qubit[4];
+
+        ApplyToEachCA(X, a[...1]);
+
+        DumpMachine();
+
+        Message("apply ");
+        QFTLE(LittleEndian(a));
+
+        DumpMachine();
+
+        ResetAll(a);
+    }
+
+    operation PrepareStateWithQFT(): Unit {
+        use a = Qubit[4];
+
+        H(Head(a));
+        ApplyToEachCA(CNOT(Head(a), _), Rest(a));
+        X(a[1]);
+        CNOT(a[1], a[0]);
+        X(a[1]);
+
+        Message("振動数を書き込む");
+        DumpMachine();
+
+        QFTLE(LittleEndian(a));
+
+        Message("信号変換後");
+
+        DumpMachine();
+
+        ResetAll(a);
+    }
+
+    operation InvQFTMain(): Unit {
+        use a = Qubit[4];
+
+        X(a[1]);
+
+        Message("register");
+        DumpMachine();
+
+        QFTLE(LittleEndian(a));
+
+        Message("InvQFT");
+        DumpMachine();
+
+        ResetAll(a);
+    }
+
+    operation QFTFrequencyMain(): Unit{
+        use a = Qubit[4];
+
+        X(a[1]);
+
+        let aLE = LittleEndian(a);
+
+        QFTLE(aLE);
+        Message("");
+        DumpMachine();
+
+        ResetAll(a);
+    }
+
+    operation CPhaseTwoMain(): Unit {
+        use q = Qubit[4];
+        
+        X(q[1]);
+        H(q[3]);
+
+        let (most, last) = MostAndTail(q);
+        let newMost = Reversed(most);
+        let thetas = ForEach<Int, Double>(x => DegToRad(90.0/ IntAsDouble(x)), RangeAsIntArray(1..Length(newMost)));
+        let thetaAndQubitPair = Zipped(newMost, thetas);
+
+        for (qubit, theta) in Zipped(newMost, thetas) {
+            Controlled R1([qubit], (theta, last));
+        }
+
+        DumpMachine();
+        ResetAll(q);
+    }
+
+    operation VectorEncordingMain(): Unit {
+        let vectorData = [0.0, 1.0, 2.0, 3.0];
+        let normalizedVector = PNormalized(2.0, vectorData);
+        let numSize = Length(vectorData);
+        Message($"input vector {vectorData}");
+        Message($"normalized {normalizedVector}");
+
+        mutable dataComplexPolar = ConstantArray(numSize, ComplexPolar(0.0, 0.0));
+        for i in IndexRange(dataComplexPolar) {
+            let theta = DegToRad(IntAsDouble(45 * i));
+            set dataComplexPolar w/= i <- ComplexAsComplexPolar(Complex(normalizedVector[i], theta));
+        }
+
+        // 2^nサイズ
+        let numQSize = Round(Lg(IntAsDouble(numSize)));
+        use register = Qubit[numQSize];
+        let phase = PrepareArbitraryStateCP(dataComplexPolar, LittleEndian(register));
+
+        Message($"phase = {phase}");
+        Message($"dataComplexPolar = {dataComplexPolar}");
+        DumpMachine();
+
+        ResetAll(register);
+    }
+
+    @EntryPoint()
+    operation MatrixEncordingMain(): Unit {
+        let numQSize = 3;
+        use register = Qubit[numQSize];
+        ApplyToEachCA(H, register);
+
+        Flip(register, 7);
+        DumpRegister((), register[0..1]);
+
+        ResetAll(register);
+    }
+
+}
