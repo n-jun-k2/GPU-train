@@ -193,3 +193,5 @@ obj/
 
 Docker/python/packages/*.jpg
 Docker/python/data/*
+
+target/*

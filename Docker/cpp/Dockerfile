@@ -7,7 +7,6 @@ ENV PYTORCH_CUDA_VERSION 118
 
 RUN chmod 1777 /tmp\
 	&& apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false  -y update \
-	&& apt-get -y upgrade \
 	&& apt-get install -y --no-install-recommends curl  \
 		ca-certificates \
 		build-essential \

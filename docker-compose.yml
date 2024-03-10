@@ -56,8 +56,11 @@ services:
     working_dir: /app
     tty: true
     environment:
+      - DISPLAY=192.168.0.3:0.0
+      - RUST_LOG=TRACE
     volumes:
       - ./Docker/vulkan/src:/app
+      - /usr/share/zoneinfo/Asia/Tokyo:/etc/localtime:ro
     deploy:
       resources:
         reservations:
